@@ -36,7 +36,7 @@ def build_index():
         show_progress=True
     )
 
-    print("✓ Index built and saved to storage/")
+    print("Index built and saved to storage/")
     return index
 
 if __name__ == "__main__":
