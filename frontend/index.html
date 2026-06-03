@@ -145,7 +145,7 @@
       color: var(--text-muted);
       display: none;
     }
-    #upload-status.visible { display: block; }
+    #upload-status.visible { display: flex; align-items: center; gap: 0.5rem; }
     #upload-status.success { color: #4ade80; background: rgba(74, 222, 128, 0.08); }
     #upload-status.error   { color: #f87171; background: rgba(248, 113, 113, 0.08); }
     #upload-status.muted   { color: var(--text-muted); }
@@ -171,6 +171,18 @@
       box-shadow: none;
     }
     #reingest-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .spinner {
+      width: 13px; height: 13px; flex-shrink: 0;
+      border: 2px solid rgba(255,255,255,0.12);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    #drop-zone.uploading {
+      opacity: 0.45;
+      pointer-events: none;
+    }
     .docs-section {
       margin-top: 1rem;
       padding-top: 1rem;
@@ -435,7 +447,8 @@
       const formData = new FormData();
       for (const f of files) formData.append('files', f);
 
-      setStatus('Uploading…', 'muted');
+      dropZone.classList.add('uploading');
+      setStatus('Uploading…', 'muted', true);
 
       try {
         const res = await fetch('/upload', { method: 'POST', body: formData });
@@ -450,12 +463,13 @@
         setStatus('Upload failed: could not reach server.', 'error');
       } finally {
         fileInput.value = '';
+      dropZone.classList.remove('uploading');
       }
     }
 
     reingestBtn.addEventListener('click', async () => {
       reingestBtn.disabled = true;
-      setStatus('Rebuilding index from all docs…', 'muted');
+      setStatus('Rebuilding index from all docs…', 'muted', true);
       try {
         const res = await fetch('/reingest', { method: 'POST' });
         const data = await res.json();
@@ -474,8 +488,8 @@
       }
     });
 
-    function setStatus(msg, type) {
-      statusEl.textContent = msg;
+    function setStatus(msg, type, loading = false) {
+      statusEl.innerHTML = (loading ? '<div class="spinner"></div>' : '') + '<span>' + msg + '</span>';
       statusEl.className = 'visible ' + type;
     }
   </script>
