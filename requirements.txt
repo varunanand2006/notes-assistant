@@ -1,0 +1,9 @@
+numpy>=2.0.0
+llama-index-core>=0.14.0
+llama-index-llms-ollama
+llama-index-embeddings-ollama
+llama-index-vector-stores-chroma
+chromadb
+fastapi
+uvicorn
+python-multipart
