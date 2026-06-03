@@ -15,7 +15,7 @@ from config import OLLAMA_MODEL, OLLAMA_BASE_URL, EMBED_MODEL, STORAGE_DIR
 
 app = FastAPI()
 
-Settings.llm = Ollama(model=OLLAMA_MODEL, base_url=OLLAMA_BASE_URL, request_timeout=120.0)
+Settings.llm = Ollama(model=OLLAMA_MODEL, base_url=OLLAMA_BASE_URL, request_timeout=300.0)
 Settings.embed_model = OllamaEmbedding(model_name=EMBED_MODEL, base_url=OLLAMA_BASE_URL)
 
 _index = None
