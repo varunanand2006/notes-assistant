@@ -270,6 +270,31 @@
       background: transparent; box-shadow: none; border: none; padding-left: 0;
       backdrop-filter: none;
     }
+    .msg-sources {
+      margin-top: 0.65rem;
+      padding-top: 0.6rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      align-items: center;
+    }
+    .sources-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-right: 0.1rem;
+    }
+    .source-chip {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      padding: 0.15rem 0.55rem;
+    }
 
     /* Input row */
     #input-row {
@@ -372,6 +397,13 @@
         msgDiv.classList.remove('thinking');
         const text = data.answer ?? data.detail ?? 'No answer returned.';
         msgDiv.innerHTML = marked.parse(text);
+        if (data.sources && data.sources.length) {
+          const bar = document.createElement('div');
+          bar.className = 'msg-sources';
+          bar.innerHTML = '<span class="sources-label">Sources</span>' +
+            data.sources.map(s => `<span class="source-chip">${s}</span>`).join('');
+          msgDiv.appendChild(bar);
+        }
       } catch (e) {
         msgDiv.classList.remove('thinking');
         msgDiv.textContent = 'Error: could not reach the server.';

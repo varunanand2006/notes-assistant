@@ -10,11 +10,11 @@ from llama_index.core import SimpleDirectoryReader, VectorStoreIndex, StorageCon
 from llama_index.vector_stores.chroma import ChromaVectorStore
 from llama_index.llms.ollama import Ollama
 from llama_index.embeddings.ollama import OllamaEmbedding
-from config import OLLAMA_MODEL, OLLAMA_BASE_URL, EMBED_MODEL, DOCS_DIR, STORAGE_DIR, CHUNK_SIZE, CHUNK_OVERLAP
+from config import OLLAMA_MODEL, OLLAMA_BASE_URL, EMBED_MODEL, DOCS_DIR, STORAGE_DIR, CHUNK_SIZE, CHUNK_OVERLAP, SYSTEM_PROMPT
 
 app = FastAPI()
 
-Settings.llm = Ollama(model=OLLAMA_MODEL, base_url=OLLAMA_BASE_URL, request_timeout=300.0)
+Settings.llm = Ollama(model=OLLAMA_MODEL, base_url=OLLAMA_BASE_URL, request_timeout=300.0, system_prompt=SYSTEM_PROMPT)
 Settings.embed_model = OllamaEmbedding(model_name=EMBED_MODEL, base_url=OLLAMA_BASE_URL)
 Settings.chunk_size = CHUNK_SIZE
 Settings.chunk_overlap = CHUNK_OVERLAP
@@ -48,7 +48,16 @@ def ask(req: AskRequest):
     index = get_index()
     engine = index.as_query_engine(similarity_top_k=4)
     response = engine.query(req.query)
-    return {"answer": str(response)}
+    seen = set()
+    sources = []
+    for node in response.source_nodes:
+        name = os.path.basename(
+            node.node.metadata.get("file_name") or node.node.metadata.get("file_path", "")
+        )
+        if name and name not in seen:
+            seen.add(name)
+            sources.append(name)
+    return {"answer": str(response), "sources": sources}
 
 
 @app.post("/upload")
