@@ -117,6 +117,18 @@ def reingest():
     return {"status": "ok", "chunks": len(docs)}
 
 
+@app.get("/files")
+def list_files():
+    docs_path = os.path.abspath(DOCS_DIR)
+    if not os.path.exists(docs_path):
+        return {"files": []}
+    files = sorted(
+        f for f in os.listdir(docs_path)
+        if os.path.splitext(f)[1].lower() in ALLOWED_EXTS
+    )
+    return {"files": files}
+
+
 FRONTEND_DIR = os.path.join(os.path.dirname(__file__), "..", "frontend")
 
 
