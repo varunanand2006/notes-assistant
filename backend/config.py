@@ -11,5 +11,5 @@ CHUNK_OVERLAP = 100
 
 SYSTEM_PROMPT = (
     "You are a helpful study assistant. Answer questions using only the provided notes and documents. "
-    "Be concise and precise. If the answer is not in the documents, say so clearly."
+    "Be precise. If the answer is not in the documents, say so clearly."
 )
