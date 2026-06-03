@@ -6,7 +6,7 @@ import chromadb
 from llama_index.core import SimpleDirectoryReader, VectorStoreIndex, StorageContext, Settings
 from llama_index.vector_stores.chroma import ChromaVectorStore
 from llama_index.embeddings.ollama import OllamaEmbedding
-from config import OLLAMA_BASE_URL, EMBED_MODEL, DOCS_DIR, STORAGE_DIR
+from config import OLLAMA_BASE_URL, EMBED_MODEL, DOCS_DIR, STORAGE_DIR, CHUNK_SIZE, CHUNK_OVERLAP
 
 def build_index():
     print("Loading documents from:", os.path.abspath(DOCS_DIR))
@@ -15,6 +15,8 @@ def build_index():
         model_name=EMBED_MODEL,
         base_url=OLLAMA_BASE_URL
     )
+    Settings.chunk_size = CHUNK_SIZE
+    Settings.chunk_overlap = CHUNK_OVERLAP
 
     documents = SimpleDirectoryReader(
         os.path.abspath(DOCS_DIR),

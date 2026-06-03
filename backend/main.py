@@ -10,12 +10,14 @@ from llama_index.core import SimpleDirectoryReader, VectorStoreIndex, StorageCon
 from llama_index.vector_stores.chroma import ChromaVectorStore
 from llama_index.llms.ollama import Ollama
 from llama_index.embeddings.ollama import OllamaEmbedding
-from config import OLLAMA_MODEL, OLLAMA_BASE_URL, EMBED_MODEL, DOCS_DIR, STORAGE_DIR
+from config import OLLAMA_MODEL, OLLAMA_BASE_URL, EMBED_MODEL, DOCS_DIR, STORAGE_DIR, CHUNK_SIZE, CHUNK_OVERLAP
 
 app = FastAPI()
 
 Settings.llm = Ollama(model=OLLAMA_MODEL, base_url=OLLAMA_BASE_URL, request_timeout=300.0)
 Settings.embed_model = OllamaEmbedding(model_name=EMBED_MODEL, base_url=OLLAMA_BASE_URL)
+Settings.chunk_size = CHUNK_SIZE
+Settings.chunk_overlap = CHUNK_OVERLAP
 
 _index = None
 ALLOWED_EXTS = {".pdf", ".md", ".txt"}
