@@ -49,7 +49,7 @@
       btn.disabled = true;
 
       addMsg(q, 'user');
-      const msgDiv = addMsg('', 'assistant thinking');
+      const msgDiv = addMsg('Thinking…', 'assistant thinking');
 
       try {
         const res = await fetch('/ask', {
@@ -63,22 +63,9 @@
           return;
         }
 
-        const reader = res.body.getReader();
-        const decoder = new TextDecoder();
-
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-          const chunk = decoder.decode(value, { stream: true });
-          if (msgDiv.classList.contains('thinking')) {
-            msgDiv.classList.remove('thinking');
-            msgDiv.textContent = '';
-          }
-          msgDiv.textContent += chunk;
-          chat.scrollTop = chat.scrollHeight;
-        }
-
-        if (!msgDiv.textContent) msgDiv.textContent = 'No answer returned.';
+        const data = await res.json();
+        msgDiv.classList.remove('thinking');
+        msgDiv.textContent = data.answer ?? data.detail ?? 'No answer returned.';
       } catch (e) {
         msgDiv.classList.remove('thinking');
         msgDiv.textContent = 'Error: could not reach the server.';
